@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="en"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Resume Helper">
+<title>Resume Helper</title>
+<style>
+*{box-sizing:border-box}body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:#f4f6f8;color:#17202a}
+.top{background:#fff;border-bottom:1px solid #ddd;padding:14px 18px;display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;z-index:2}.brand{font-weight:800;font-size:18px}
+button{border:0;border-radius:8px;padding:9px 12px;font-weight:700;cursor:pointer}.print{background:#17202a;color:#fff}
+main{max-width:1100px;margin:auto;padding:18px}.hero{background:#17202a;color:white;padding:22px;border-radius:15px;margin-bottom:15px}.hero h1{margin:5px 0;font-size:25px}.hero p{margin:4px 0;color:#d7dee5}
+.card{background:#fff;border:1px solid #ddd;border-radius:13px;padding:17px;margin-bottom:14px}.head{display:flex;justify-content:space-between;align-items:center}.head h2{font-size:17px}.grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+label{font-size:12px;font-weight:700;color:#4b5563}label span{display:block;margin:0 0 5px}input,textarea{width:100%;padding:10px;border:1px solid #ccd2d8;border-radius:7px;font:inherit;margin-bottom:10px}.add{background:#eef2ff;color:#273593}.danger{background:#f3f4f6;color:#555}.repeat{border-top:1px solid #eee;padding-top:13px;margin-top:13px}.row{display:flex;gap:7px}.row input{flex:1}.chips{display:flex;gap:7px;flex-wrap:wrap;margin-top:10px}.chip{background:#eef2ff;color:#273593;padding:6px 9px;border-radius:20px;font-size:12px}.chip button{padding:0;background:none;color:inherit}
+.preview{background:white;padding:38px;box-shadow:0 5px 25px #0001;margin-top:20px}.rh{border-bottom:2px solid #17202a;padding-bottom:15px}.rh h2{margin:0;font-size:30px}.title{font-weight:700;color:#475569}.contact{font-size:12px;color:#64748b;margin-top:6px}.sec{margin-top:19px}.sec h3{font-size:11px;letter-spacing:1.3px;text-transform:uppercase;border-bottom:1px solid #ddd;padding-bottom:5px}.sec p,.sec li{font-size:12px;line-height:1.5}.jobtop{display:flex;justify-content:space-between;font-size:12px}.company{font-size:11px;color:#64748b}.skills span{font-size:11px;background:#f1f5f9;padding:5px 7px;margin:3px;display:inline-block}
+@media(max-width:700px){.grid{grid-template-columns:1fr}.preview{padding:25px}.top{position:static}}@media print{.top,main>.card,.hero,.editor{display:none!important}.preview{box-shadow:none;margin:0;padding:35px}.app{background:#fff}}
+</style></head><body>
+<div class="top"><div class="brand">📄 Resume Helper</div><button class="print" onclick="window.print()">Print / Save PDF</button></div>
+<main>
+<div class="hero"><h1>Build your resume.</h1><p>Enter your information and watch your resume update.</p></div>
+<div class="card"><div class="head"><h2>Contact & Headline</h2></div><div class="grid">
+<label>Full name<span><input id="name"></span></label><label>Professional title<span><input id="title"></span></label>
+<label>Email<span><input id="email"></span></label><label>Phone<span><input id="phone"></span></label><label>City / State<span><input id="city"></span></label></div></div>
+<div class="card"><div class="head"><h2>Professional Summary</h2><button class="add" onclick="improve()">✦ Improve</button></div><textarea id="summary" rows="5"></textarea></div>
+<div class="card"><div class="head"><h2>Work Experience</h2><button class="add" onclick="addJob()">＋ Add job</button></div><div id="jobs"></div></div>
+<div class="card"><div class="head"><h2>Skills</h2></div><div class="row"><input id="skill" placeholder="Type a skill"><button class="add" onclick="addSkill()">Add</button></div><div id="skills" class="chips"></div></div>
+<div class="card"><div class="head"><h2>Education</h2><button class="add" onclick="addEdu()">＋ Add education</button></div><div id="education"></div></div>
+<div class="preview"><div class="rh"><h2 id="rname"></h2><div class="title" id="rtitle"></div><div class="contact" id="rcontact"></div></div>
+<div class="sec"><h3>Professional Summary</h3><p id="rsummary"></p></div>
+<div class="sec"><h3>Experience</h3><div id="rjobs"></div></div>
+<div class="sec"><h3>Skills</h3><div id="rskills" class="skills"></div></div>
+<div class="sec"><h3>Education</h3><div id="redu"></div></div></div>
+</main>
+<script>
+const key="resume-helper-ip";let d=JSON.parse(localStorage.getItem(key)||"null")||{name:"Your Name",title:"Professional Title",email:"you@email.com",phone:"(555) 555-5555",city:"City, CA",summary:"Reliable professional with experience helping people, solving problems, and getting results.",skills:["Customer Service","Communication","Problem Solving"],jobs:[{company:"Company Name",role:"Job Title",dates:"2024 – Present",bullets:["Describe an accomplishment or responsibility.","Add a measurable result when possible."]}],education:[{school:"School Name",degree:"Degree / Certificate",dates:"2020 – 2024"}]};
+function save(){localStorage.setItem(key,JSON.stringify(d));render()}function bind(id,k){let e=document.getElementById(id);e.value=d[k];e.oninput=()=>{d[k]=e.value;save()}}
+["name","title","email","phone","city","summary"].forEach(k=>bind(k,k));
+function addJob(){d.jobs.push({company:"",role:"",dates:"",bullets:[""]});save()}function delJob(i){d.jobs.splice(i,1);save()}
+function addEdu(){d.education.push({school:"",degree:"",dates:""});save()}function delEdu(i){d.education.splice(i,1);save()}
+function addSkill(){let e=document.getElementById("skill"),v=e.value.trim();if(v&&!d.skills.includes(v))d.skills.push(v);e.value="";save()}
+function delSkill(i){d.skills.splice(i,1);save()}function improve(){d.summary+=" Results-focused, dependable, and committed to delivering high-quality work.";save()}
+function render(){
+document.getElementById("rname").textContent=d.name||"Your Name";document.getElementById("rtitle").textContent=d.title;document.getElementById("rcontact").textContent=[d.email,d.phone,d.city].filter(Boolean).join(" • ");document.getElementById("rsummary").textContent=d.summary;
+document.getElementById("jobs").innerHTML=d.jobs.map((j,i)=>`<div class="repeat"><div class="head"><b>Job ${i+1}</b><button class="danger" onclick="delJob(${i})">Delete</button></div><div class="grid"><label>Company<span><input value="${esc(j.company)}" oninput="d.jobs[${i}].company=this.value;save()"></span></label><label>Job title<span><input value="${esc(j.role)}" oninput="d.jobs[${i}].role=this.value;save()"></span></label><label>Dates<span><input value="${esc(j.dates)}" oninput="d.jobs[${i}].dates=this.value;save()"></span></label></div>${j.bullets.map((b,k)=>`<div class="row"><input value="${esc(b)}" placeholder="Achievement or responsibility" oninput="d.jobs[${i}].bullets[${k}]=this.value;save()"><button class="danger" onclick="d.jobs[${i}].bullets.splice(${k},1);save()">×</button></div>`).join("")}<button class="add" onclick="d.jobs[${i}].bullets.push('');save()">＋ Bullet</button></div>`).join("");
+document.getElementById("skills").innerHTML=d.skills.map((s,i)=>`<span class="chip">${esc(s)} <button onclick="delSkill(${i})">×</button></span>`).join("");
+document.getElementById("education").innerHTML=d.education.map((e,i)=>`<div class="repeat"><div class="head"><b>Education ${i+1}</b><button class="danger" onclick="delEdu(${i})">Delete</button></div><div class="grid"><label>School<span><input value="${esc(e.school)}" oninput="d.education[${i}].school=this.value;save()"></span></label><label>Degree / Certificate<span><input value="${esc(e.degree)}" oninput="d.education[${i}].degree=this.value;save()"></span></label><label>Dates<span><input value="${esc(e.dates)}" oninput="d.education[${i}].dates=this.value;save()"></span></label></div></div>`).join("");
+document.getElementById("rjobs").innerHTML=d.jobs.map(j=>`<div style="margin-bottom:14px"><div class="jobtop"><b>${esc(j.role)}</b><span>${esc(j.dates)}</span></div><div class="company">${esc(j.company)}</div><ul>${j.bullets.filter(Boolean).map(b=>`<li>${esc(b)}</li>`).join("")}</ul></div>`).join("");
+document.getElementById("rskills").innerHTML=d.skills.map(s=>`<span>${esc(s)}</span>`).join("");
+document.getElementById("redu").innerHTML=d.education.map(e=>`<div style="margin-bottom:12px"><div class="jobtop"><b>${esc(e.degree)}</b><span>${esc(e.dates)}</span></div><div class="company">${esc(e.school)}</div></div>`).join("");
+}
+function esc(s){return String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[c]))}
+render();
+</script></body></html>
