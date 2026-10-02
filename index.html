@@ -1,62 +1,206 @@
 <!doctype html>
-<html lang="en"><head>
-<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Resume Helper">
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Resume Helper">
 <title>Resume Helper</title>
 <style>
-*{box-sizing:border-box}body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:#f4f6f8;color:#17202a}
-.top{background:#fff;border-bottom:1px solid #ddd;padding:14px 18px;display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;z-index:2}.brand{font-weight:800;font-size:18px}
-button{border:0;border-radius:8px;padding:9px 12px;font-weight:700;cursor:pointer}.print{background:#17202a;color:#fff}
-main{max-width:1100px;margin:auto;padding:18px}.hero{background:#17202a;color:white;padding:22px;border-radius:15px;margin-bottom:15px}.hero h1{margin:5px 0;font-size:25px}.hero p{margin:4px 0;color:#d7dee5}
-.card{background:#fff;border:1px solid #ddd;border-radius:13px;padding:17px;margin-bottom:14px}.head{display:flex;justify-content:space-between;align-items:center}.head h2{font-size:17px}.grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-label{font-size:12px;font-weight:700;color:#4b5563}label span{display:block;margin:0 0 5px}input,textarea{width:100%;padding:10px;border:1px solid #ccd2d8;border-radius:7px;font:inherit;margin-bottom:10px}.add{background:#eef2ff;color:#273593}.danger{background:#f3f4f6;color:#555}.repeat{border-top:1px solid #eee;padding-top:13px;margin-top:13px}.row{display:flex;gap:7px}.row input{flex:1}.chips{display:flex;gap:7px;flex-wrap:wrap;margin-top:10px}.chip{background:#eef2ff;color:#273593;padding:6px 9px;border-radius:20px;font-size:12px}.chip button{padding:0;background:none;color:inherit}
-.preview{background:white;padding:38px;box-shadow:0 5px 25px #0001;margin-top:20px}.rh{border-bottom:2px solid #17202a;padding-bottom:15px}.rh h2{margin:0;font-size:30px}.title{font-weight:700;color:#475569}.contact{font-size:12px;color:#64748b;margin-top:6px}.sec{margin-top:19px}.sec h3{font-size:11px;letter-spacing:1.3px;text-transform:uppercase;border-bottom:1px solid #ddd;padding-bottom:5px}.sec p,.sec li{font-size:12px;line-height:1.5}.jobtop{display:flex;justify-content:space-between;font-size:12px}.company{font-size:11px;color:#64748b}.skills span{font-size:11px;background:#f1f5f9;padding:5px 7px;margin:3px;display:inline-block}
-@media(max-width:700px){.grid{grid-template-columns:1fr}.preview{padding:25px}.top{position:static}}@media print{.top,main>.card,.hero,.editor{display:none!important}.preview{box-shadow:none;margin:0;padding:35px}.app{background:#fff}}
-</style></head><body>
-<div class="top"><div class="brand">📄 Resume Helper</div><button class="print" onclick="window.print()">Print / Save PDF</button></div>
-<main>
-<div class="hero"><h1>Build your resume.</h1><p>Enter your information and watch your resume update.</p></div>
-<div class="card"><div class="head"><h2>Contact & Headline</h2></div><div class="grid">
-<label>Full name<span><input id="name"></span></label><label>Professional title<span><input id="title"></span></label>
-<label>Email<span><input id="email"></span></label><label>Phone<span><input id="phone"></span></label><label>City / State<span><input id="city"></span></label></div></div>
-<div class="card"><div class="head"><h2>Professional Summary</h2><button class="add" onclick="improve()">✦ Improve</button></div><textarea id="summary" rows="5"></textarea></div>
-<div class="card"><div class="head"><h2>Work Experience</h2><button class="add" onclick="addJob()">＋ Add job</button></div><div id="jobs"></div></div>
-<div class="card"><div class="head"><h2>Skills</h2></div><div class="row"><input id="skill" placeholder="Type a skill"><button class="add" onclick="addSkill()">Add</button></div><div id="skills" class="chips"></div></div>
-<div class="card"><div class="head"><h2>Education</h2><button class="add" onclick="addEdu()">＋ Add education</button></div><div id="education"></div></div>
-<div class="preview"><div class="rh"><h2 id="rname"></h2><div class="title" id="rtitle"></div><div class="contact" id="rcontact"></div></div>
-<div class="sec"><h3>Professional Summary</h3><p id="rsummary"></p></div>
-<div class="sec"><h3>Experience</h3><div id="rjobs"></div></div>
-<div class="sec"><h3>Skills</h3><div id="rskills" class="skills"></div></div>
-<div class="sec"><h3>Education</h3><div id="redu"></div></div></div>
-</main>
-<script>
-const key="resume-helper-ip";let d=JSON.parse(localStorage.getItem(key)||"null")||{name:"Your Name",title:"Professional Title",email:"you@email.com",phone:"(555) 555-5555",city:"City, CA",summary:"Reliable professional with experience helping people, solving problems, and getting results.",skills:["Customer Service","Communication","Problem Solving"],jobs:[{company:"Company Name",role:"Job Title",dates:"2024 – Present",bullets:["Describe an accomplishment or responsibility.","Add a measurable result when possible."]}],education:[{school:"School Name",degree:"Degree / Certificate",dates:"2020 – 2024"}]};
-function persist(){localStorage.setItem(key,JSON.stringify(d))}
-function renderPreview(){
- document.getElementById("rname").textContent=d.name||"Your Name";document.getElementById("rtitle").textContent=d.title;document.getElementById("rcontact").textContent=[d.email,d.phone,d.city].filter(Boolean).join(" • ");document.getElementById("rsummary").textContent=d.summary;
- document.getElementById("rjobs").innerHTML=d.jobs.map(j=>`<div style="margin-bottom:14px"><div class="jobtop"><b>${esc(j.role)}</b><span>${esc(j.dates)}</span></div><div class="company">${esc(j.company)}</div><ul>${j.bullets.filter(Boolean).map(b=>`<li>${esc(b)}</li>`).join("")}</ul></div>`).join("");
- document.getElementById("rskills").innerHTML=d.skills.map(s=>`<span>${esc(s)}</span>`).join("");
- document.getElementById("redu").innerHTML=d.education.map(e=>`<div style="margin-bottom:12px"><div class="jobtop"><b>${esc(e.degree)}</b><span>${esc(e.dates)}</span></div><div class="company">${esc(e.school)}</div></div>`).join("");
+*{box-sizing:border-box}
+:root{--ink:#17202a;--muted:#64748b;--line:#dbe1e7;--soft:#f4f6f8;--blue:#273593;--blueSoft:#eef2ff;--white:#fff}
+html{scroll-behavior:smooth}
+body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:var(--soft);color:var(--ink)}
+button,input,textarea{font:inherit}
+button{border:0;border-radius:9px;padding:9px 13px;font-weight:700;cursor:pointer}
+button:active{transform:translateY(1px)}
+.top{background:#fff;border-bottom:1px solid var(--line);padding:13px 22px;display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;z-index:10;gap:15px}
+.brand{font-weight:800;font-size:18px;white-space:nowrap}
+.top-actions{display:flex;gap:8px;align-items:center}
+.print{background:var(--ink);color:#fff}.secondary{background:#eef1f4;color:#334155}.add{background:var(--blueSoft);color:var(--blue)}.danger{background:#f1f3f5;color:#555}
+main{max-width:1180px;margin:auto;padding:20px}
+.hero{background:var(--ink);color:#fff;padding:24px;border-radius:16px;margin-bottom:18px}.hero h1{margin:0 0 5px;font-size:26px}.hero p{margin:0;color:#d7dee5}
+.editor{display:grid;grid-template-columns:minmax(0,1fr);gap:15px}.editor .card{order:0}
+.card{background:#fff;border:1px solid var(--line);border-radius:14px;padding:18px;margin-bottom:0;box-shadow:0 2px 8px rgba(15,23,42,.03)}
+.head{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:13px}.head h2{font-size:17px;margin:0}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+label{font-size:12px;font-weight:700;color:#475569}label>span{display:block;margin:0 0 5px}
+input,textarea{width:100%;padding:10px 11px;border:1px solid #ccd2d8;border-radius:8px;background:#fff;color:var(--ink);outline:none;margin-bottom:10px;transition:border-color .15s,box-shadow .15s}
+input:focus,textarea:focus{border-color:#7c83d9;box-shadow:0 0 0 3px rgba(39,53,147,.08)}
+textarea{resize:vertical;line-height:1.45}
+.repeat{border-top:1px solid #eee;padding-top:14px;margin-top:14px}.row{display:flex;gap:7px;align-items:flex-start}.row input{flex:1}
+.chips{display:flex;gap:8px;flex-wrap:wrap;margin-top:5px}.chip{background:var(--blueSoft);color:var(--blue);padding:7px 10px;border-radius:20px;font-size:12px;display:inline-flex;align-items:center;gap:6px}.chip button{padding:0;background:none;color:inherit;font-size:15px}
+.section-note{font-size:12px;color:var(--muted);margin:-5px 0 12px}
+.preview-card{margin-top:22px;clear:both}.preview-card .preview{position:relative}.preview-label{font-size:12px;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:10px}
+.preview{background:white;padding:42px;box-shadow:0 5px 25px rgba(0,0,0,.08);border:1px solid #e3e7eb;max-width:900px;margin:auto;min-height:900px}
+.rh{border-bottom:2px solid var(--ink);padding-bottom:15px}.rh h2{margin:0;font-size:30px}.title{font-weight:700;color:#475569;margin-top:2px}.contact{font-size:12px;color:#64748b;margin-top:6px}
+.sec{margin-top:20px}.sec h3{font-size:11px;letter-spacing:1.3px;text-transform:uppercase;border-bottom:1px solid #ddd;padding-bottom:5px;margin-bottom:8px}.sec p,.sec li{font-size:12px;line-height:1.5}.sec p{white-space:pre-line}
+.jobtop{display:flex;justify-content:space-between;gap:15px;font-size:12px}.company{font-size:11px;color:#64748b;margin-top:2px}.preview-skills{display:flex;flex-wrap:wrap;gap:8px}.preview-skills span{font-size:11px;background:#f1f5f9;padding:5px 9px;border-radius:5px;display:inline-block}
+.empty{color:#94a3b8;font-size:12px;font-style:italic}
+.status{font-size:11px;color:#64748b;min-height:16px}
+@media(max-width:700px){.grid{grid-template-columns:1fr}.preview{padding:25px;min-height:auto}.top{position:static;padding:12px 14px}.top-actions .secondary{display:none}main{padding:12px}.hero{padding:20px}.hero h1{font-size:23px}.head{align-items:flex-start}.top{flex-wrap:wrap}}
+@media print{
+body{background:#fff}.top,.hero,.editor,.preview-label,.preview-card>h2{display:none!important}.preview-card{display:block;margin:0;border:0;box-shadow:none}.preview{display:block;box-shadow:none;border:0;margin:0;padding:35px;max-width:none;min-height:0}
 }
-function save(){persist();renderPreview()}
-function bind(id,k){let e=document.getElementById(id);e.value=d[k];e.oninput=()=>{d[k]=e.value;save()}}
-["name","title","email","phone","city","summary"].forEach(k=>bind(k,k));
-function updateJob(i,k,v){d.jobs[i][k]=v;save()}
-function updateBullet(i,k,v){d.jobs[i].bullets[k]=v;save()}
-function updateEdu(i,k,v){d.education[i][k]=v;save()}
-function addJob(){d.jobs.push({company:"",role:"",dates:"",bullets:[""]});persist();render()}function delJob(i){d.jobs.splice(i,1);persist();render()}
-function addEdu(){d.education.push({school:"",degree:"",dates:""});persist();render()}function delEdu(i){d.education.splice(i,1);persist();render()}
-function addSkill(){let e=document.getElementById("skill"),v=e.value.trim();if(v&&!d.skills.includes(v))d.skills.push(v);e.value="";persist();render()}
-function delSkill(i){d.skills.splice(i,1);persist();render()}function improve(){d.summary+=" Results-focused, dependable, and committed to delivering high-quality work.";save()}
-function render(){
-document.getElementById("rname").textContent=d.name||"Your Name";document.getElementById("rtitle").textContent=d.title;document.getElementById("rcontact").textContent=[d.email,d.phone,d.city].filter(Boolean).join(" • ");document.getElementById("rsummary").textContent=d.summary;
-document.getElementById("jobs").innerHTML=d.jobs.map((j,i)=>`<div class="repeat"><div class="head"><b>Job ${i+1}</b><button class="danger" onclick="delJob(${i})">Delete</button></div><div class="grid"><label>Company<span><input value="${esc(j.company)}" oninput="updateJob(${i},'company',this.value)"></span></label><label>Job title<span><input value="${esc(j.role)}" oninput="updateJob(${i},'role',this.value)"></span></label><label>Dates<span><input value="${esc(j.dates)}" oninput="updateJob(${i},'dates',this.value)"></span></label></div>${j.bullets.map((b,k)=>`<div class="row"><input value="${esc(b)}" placeholder="Achievement or responsibility" oninput="updateBullet(${i},${k},this.value)"><button class="danger" onclick="d.jobs[${i}].bullets.splice(${k},1);save()">×</button></div>`).join("")}<button class="add" onclick="d.jobs[${i}].bullets.push('');save()">＋ Bullet</button></div>`).join("");
-document.getElementById("skills").innerHTML=d.skills.map((s,i)=>`<span class="chip">${esc(s)} <button onclick="delSkill(${i})">×</button></span>`).join("");
-document.getElementById("education").innerHTML=d.education.map((e,i)=>`<div class="repeat"><div class="head"><b>Education ${i+1}</b><button class="danger" onclick="delEdu(${i})">Delete</button></div><div class="grid"><label>School<span><input value="${esc(e.school)}" oninput="updateEdu(${i},'school',this.value)"></span></label><label>Degree / Certificate<span><input value="${esc(e.degree)}" oninput="updateEdu(${i},'degree',this.value)"></span></label><label>Dates<span><input value="${esc(e.dates)}" oninput="updateEdu(${i},'dates',this.value)"></span></label></div></div>`).join("");
-document.getElementById("rjobs").innerHTML=d.jobs.map(j=>`<div style="margin-bottom:14px"><div class="jobtop"><b>${esc(j.role)}</b><span>${esc(j.dates)}</span></div><div class="company">${esc(j.company)}</div><ul>${j.bullets.filter(Boolean).map(b=>`<li>${esc(b)}</li>`).join("")}</ul></div>`).join("");
-document.getElementById("rskills").innerHTML=d.skills.map(s=>`<span>${esc(s)}</span>`).join("");
-document.getElementById("redu").innerHTML=d.education.map(e=>`<div style="margin-bottom:12px"><div class="jobtop"><b>${esc(e.degree)}</b><span>${esc(e.dates)}</span></div><div class="company">${esc(e.school)}</div></div>`).join("");
+</style>
+</head>
+<body>
+<header class="top">
+  <div class="brand">📄 Resume Helper</div>
+  <div class="top-actions">
+    <button class="secondary" onclick="startFresh()">Start Fresh</button>
+    <button class="print" onclick="window.print()">Print / Save PDF</button>
+  </div>
+</header>
+
+<main>
+  <section class="hero">
+    <h1>Build your resume.</h1>
+    <p>Enter your information below and watch your professional resume update instantly.</p>
+  </section>
+
+  <div class="editor">
+    <section class="card">
+      <div class="head"><h2>Contact &amp; Headline</h2><span class="status" id="saveStatus">Saved automatically</span></div>
+      <div class="grid">
+        <label>Full name<span><input id="name" autocomplete="name"></span></label>
+        <label>Professional title<span><input id="title"></span></label>
+        <label>Email<span><input id="email" type="email" autocomplete="email"></span></label>
+        <label>Phone<span><input id="phone" type="tel" autocomplete="tel"></span></label>
+        <label>City / State<span><input id="city" autocomplete="address-level2"></span></label>
+      </div>
+    </section>
+
+    <section class="card">
+      <div class="head"><h2>Professional Summary</h2><button class="add" onclick="improve()">✦ Improve</button></div>
+      <textarea id="summary" rows="5" placeholder="Write a short summary of your experience, strengths, and career goals."></textarea>
+    </section>
+
+    <section class="card">
+      <div class="head"><h2>Work Experience</h2><button class="add" onclick="addJob()">＋ Add job</button></div>
+      <p class="section-note">Add your most recent position first. You can add as many jobs as you need.</p>
+      <div id="jobs"></div>
+    </section>
+
+    <section class="card">
+      <div class="head"><h2>Skills</h2></div>
+      <div class="row"><input id="skill" placeholder="Type a skill and press Add"><button class="add" onclick="addSkill()">Add</button></div>
+      <div id="skills" class="chips"></div>
+    </section>
+
+    <section class="card">
+      <div class="head"><h2>Education</h2><button class="add" onclick="addEdu()">＋ Add education</button></div>
+      <div id="education"></div>
+    </section>
+  </div>
+
+  <section class="card preview-card">
+    <div class="preview-label">Live Resume Preview</div>
+    <div class="preview">
+      <div class="rh"><h2 id="rname"></h2><div class="title" id="rtitle"></div><div class="contact" id="rcontact"></div></div>
+      <div class="sec"><h3>Professional Summary</h3><p id="rsummary"></p></div>
+      <div class="sec"><h3>Experience</h3><div id="rjobs"></div></div>
+      <div class="sec"><h3>Skills</h3><div id="rskills" class="preview-skills"></div></div>
+      <div class="sec"><h3>Education</h3><div id="redu"></div></div>
+    </div>
+  </section>
+</main>
+
+<script>
+const key="resume-helper-ip";
+const defaults={
+  name:"Your Name",title:"Professional Title",email:"you@email.com",phone:"(555) 555-5555",city:"City, CA",
+  summary:"Reliable professional with experience helping people, solving problems, and getting results.",
+  skills:["Customer Service","Communication","Problem Solving"],
+  jobs:[{company:"Company Name",role:"Job Title",dates:"2024 – Present",bullets:["Describe an accomplishment or responsibility.","Add a measurable result when possible."]}],
+  education:[{school:"School Name",degree:"Degree / Certificate",dates:"2020 – 2024"}]
+};
+let d=loadData();
+
+function loadData(){
+  try{
+    const saved=JSON.parse(localStorage.getItem(key)||"null");
+    return saved ? normalize(saved) : structuredClone(defaults);
+  }catch(e){return structuredClone(defaults)}
+}
+function normalize(x){
+  return {
+    name:x.name??defaults.name,title:x.title??defaults.title,email:x.email??defaults.email,phone:x.phone??defaults.phone,city:x.city??defaults.city,
+    summary:x.summary??defaults.summary,skills:Array.isArray(x.skills)?x.skills:[],
+    jobs:Array.isArray(x.jobs)&&x.jobs.length?x.jobs.map(j=>({company:j.company??"",role:j.role??"",dates:j.dates??"",bullets:Array.isArray(j.bullets)?j.bullets:[""]})):[],
+    education:Array.isArray(x.education)?x.education.map(e=>({school:e.school??"",degree:e.degree??"",dates:e.dates??""})):[]
+  };
+}
+function persist(){localStorage.setItem(key,JSON.stringify(d));setStatus()}
+function setStatus(){const e=document.getElementById("saveStatus");if(e)e.textContent="Saved automatically"}
+function saveAndPreview(){persist();renderPreview()}
+
+function bindBasic(id,keyName){
+  const e=document.getElementById(id);e.value=d[keyName];
+  e.addEventListener("input",()=>{d[keyName]=e.value;saveAndPreview()});
+}
+["name","title","email","phone","city","summary"].forEach(k=>bindBasic(k,k));
+
+function updateJob(i,k,v){d.jobs[i][k]=v;saveAndPreview()}
+function updateBullet(i,k,v){d.jobs[i].bullets[k]=v;saveAndPreview()}
+function updateEdu(i,k,v){d.education[i][k]=v;saveAndPreview()}
+function addJob(){d.jobs.push({company:"",role:"",dates:"",bullets:[""]});persist();renderEditor()}
+function delJob(i){d.jobs.splice(i,1);persist();renderEditor();renderPreview()}
+function addBullet(i){d.jobs[i].bullets.push("");persist();renderEditor()}
+function delBullet(i,k){d.jobs[i].bullets.splice(k,1);if(!d.jobs[i].bullets.length)d.jobs[i].bullets.push("");persist();renderEditor();renderPreview()}
+function addEdu(){d.education.push({school:"",degree:"",dates:""});persist();renderEditor()}
+function delEdu(i){d.education.splice(i,1);persist();renderEditor();renderPreview()}
+function addSkill(){const e=document.getElementById("skill"),v=e.value.trim();if(v&&!d.skills.includes(v)){d.skills.push(v);e.value="";persist();renderEditor();renderPreview()}else if(!v){e.focus()}}
+function delSkill(i){d.skills.splice(i,1);persist();renderEditor();renderPreview()}
+function improve(){
+  const current=d.summary.trim();
+  const addition=" Results-focused, dependable, and committed to delivering high-quality work.";
+  if(!current.includes("Results-focused, dependable")){d.summary=(current||"Reliable professional").replace(/[. ]+$/,".")+addition;saveAndPreview();}
+}
+function startFresh(){
+  if(confirm("Start a new resume? Your current saved information will be replaced.")){
+    d=structuredClone(defaults);localStorage.removeItem(key);bindAllBasicValues();renderEditor();renderPreview();
+  }
+}
+function bindAllBasicValues(){["name","title","email","phone","city","summary"].forEach(k=>document.getElementById(k).value=d[k])}
+
+function renderEditor(){
+  document.getElementById("jobs").innerHTML=d.jobs.map((j,i)=>`<div class="repeat">
+    <div class="head"><b>Job ${i+1}</b><button class="danger" onclick="delJob(${i})">Delete</button></div>
+    <div class="grid">
+      <label>Company<span><input value="${esc(j.company)}" oninput="updateJob(${i},'company',this.value)"></span></label>
+      <label>Job title<span><input value="${esc(j.role)}" oninput="updateJob(${i},'role',this.value)"></span></label>
+      <label>Dates<span><input value="${esc(j.dates)}" oninput="updateJob(${i},'dates',this.value)"></span></label>
+    </div>
+    ${j.bullets.map((b,k)=>`<div class="row"><input value="${esc(b)}" placeholder="Achievement or responsibility" oninput="updateBullet(${i},${k},this.value)"><button class="danger" onclick="delBullet(${i},${k})">×</button></div>`).join("")}
+    <button class="add" onclick="addBullet(${i})">＋ Bullet</button>
+  </div>`).join("");
+
+  document.getElementById("skills").innerHTML=d.skills.length?d.skills.map((s,i)=>`<span class="chip">${esc(s)} <button onclick="delSkill(${i})" aria-label="Remove skill">×</button></span>`).join(""):"<span class='empty'>No skills added yet.</span>";
+
+  document.getElementById("education").innerHTML=d.education.map((e,i)=>`<div class="repeat">
+    <div class="head"><b>Education ${i+1}</b><button class="danger" onclick="delEdu(${i})">Delete</button></div>
+    <div class="grid">
+      <label>School<span><input value="${esc(e.school)}" oninput="updateEdu(${i},'school',this.value)"></span></label>
+      <label>Degree / Certificate<span><input value="${esc(e.degree)}" oninput="updateEdu(${i},'degree',this.value)"></span></label>
+      <label>Dates<span><input value="${esc(e.dates)}" oninput="updateEdu(${i},'dates',this.value)"></span></label>
+    </div>
+  </div>`).join("");
+}
+
+function renderPreview(){
+  document.getElementById("rname").textContent=d.name||"Your Name";
+  document.getElementById("rtitle").textContent=d.title||"";
+  document.getElementById("rcontact").textContent=[d.email,d.phone,d.city].filter(Boolean).join(" • ");
+  document.getElementById("rsummary").textContent=d.summary||"";
+  document.getElementById("rjobs").innerHTML=d.jobs.length?d.jobs.map(j=>`<div style="margin-bottom:14px"><div class="jobtop"><b>${esc(j.role)}</b><span>${esc(j.dates)}</span></div><div class="company">${esc(j.company)}</div><ul>${j.bullets.filter(Boolean).map(b=>`<li>${esc(b)}</li>`).join("")}</ul></div>`).join(""):"<div class='empty'>No work experience added yet.</div>";
+  document.getElementById("rskills").innerHTML=d.skills.length?d.skills.map(s=>`<span>${esc(s)}</span>`).join(""):"<span class='empty'>No skills added yet.</span>";
+  document.getElementById("redu").innerHTML=d.education.length?d.education.map(e=>`<div style="margin-bottom:12px"><div class="jobtop"><b>${esc(e.degree)}</b><span>${esc(e.dates)}</span></div><div class="company">${esc(e.school)}</div></div>`).join(""):"<div class='empty'>No education added yet.</div>";
 }
 function esc(s){return String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[c]))}
-render();
-</script></body></html>
+
+renderEditor();
+renderPreview();
+</script>
+</body>
+</html>
