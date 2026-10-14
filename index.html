@@ -13,6 +13,7 @@ body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif
 .top{background:#fff;border-bottom:1px solid #ddd;padding:14px 18px;display:flex;justify-content:space-between;align-items:center;gap:10px}
 .brand{font-weight:800;font-size:18px}
 button{border:0;border-radius:8px;padding:10px 12px;font-weight:700;cursor:pointer}
+button:focus-visible,input:focus-visible,textarea:focus-visible{outline:2px solid #536dfe;outline-offset:2px}
 .print{background:#17202a;color:#fff}
 main{max-width:1100px;margin:auto;padding:18px}
 .hero{background:#17202a;color:white;padding:22px;border-radius:15px;margin-bottom:15px}
@@ -24,8 +25,8 @@ main{max-width:1100px;margin:auto;padding:18px}
 .grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
 label{font-size:12px;font-weight:700;color:#4b5563;display:block}
 label span{display:block;margin:5px 0}
-input,textarea{width:100%;padding:11px;border:1px solid #ccd2d8;border-radius:7px;font:inherit;margin-bottom:10px;background:#fff;color:#17202a}
-textarea{resize:vertical}
+input,textarea{width:100%;padding:12px;border:1px solid #ccd2d8;border-radius:7px;font:inherit;margin-bottom:10px;background:#fff;color:#17202a;font-size:16px}
+textarea{resize:vertical;min-height:100px}
 .add{background:#eef2ff;color:#273593}
 .danger{background:#f3f4f6;color:#555}
 .repeat{border-top:1px solid #eee;padding-top:13px;margin-top:13px}
@@ -38,21 +39,22 @@ textarea{resize:vertical}
 .preview-label{font-size:17px;font-weight:800;margin-bottom:14px}
 .rh{border-bottom:1px solid #aaa;padding-bottom:13px;text-align:center}
 .rh h2{margin:0;font-size:29px;font-weight:800}
-.title{font-weight:600;color:#202020}
+.resume-title{font-weight:600;color:#202020}
 .contact{font-size:12px;color:#333;margin-top:6px}
 .sec{margin-top:17px}
-.sec h3{font-size:14px;border-bottom:0;padding-bottom:2px;margin-bottom:6px;text-decoration:underline;font-weight:800}
-.sec p,.sec li{font-size:12.5px;line-height:1.45}
+.sec h3{font-size:14px;padding-bottom:2px;margin-bottom:6px;text-decoration:underline;font-weight:800}
+.sec p,.sec li{font-size:12.5px;line-height:1.45;overflow-wrap:anywhere}
 .jobtop{display:flex;justify-content:space-between;gap:12px;font-size:12.5px}
-.company{font-size:12px;color:#333;margin-top:2px}
+.company{font-size:12px;color:#333;margin-top:2px;overflow-wrap:anywhere}
 .skills span{font-size:12px;margin:0 12px 3px 0;display:inline-block}
 .empty{font-size:12px;color:#777}
-.status{font-size:12px;color:#64748b;margin-top:10px}
+.status{font-size:12px;color:#64748b;margin:0 0 14px}
 @media(max-width:700px){
  .grid{grid-template-columns:1fr}
  .preview{padding:22px}
  .top{position:static}
  main{padding:12px}
+ .head{align-items:flex-start}
 }
 @page{size:letter;margin:.45in}
 @media print{
@@ -72,7 +74,7 @@ textarea{resize:vertical}
 <body>
 <div class="top">
   <div class="brand">📄 Resume Helper</div>
-  <button class="print" onclick="window.print()">Print / Save PDF</button>
+  <button type="button" class="print" id="printBtn">Print / Save PDF</button>
 </div>
 
 <main>
@@ -82,7 +84,7 @@ textarea{resize:vertical}
   </div>
 
   <section class="card">
-    <div class="head"><h2>Contact &amp; Headline</h2></div>
+    <div class="head"><h2>1. Name &amp; Contact Information</h2></div>
     <div class="grid">
       <label>Full name<span><input id="name" autocomplete="name"></span></label>
       <label>Professional title<span><input id="title" autocomplete="organization-title"></span></label>
@@ -93,59 +95,59 @@ textarea{resize:vertical}
   </section>
 
   <section class="card">
-    <div class="head">
-      <h2>Professional Summary</h2>
-      <button class="add" onclick="improve()">✦ Improve</button>
-    </div>
+    <div class="head"><h2>2. Objective</h2></div>
     <p style="font-size:12px;color:#64748b;margin-top:0">
-      Briefly describe your experience, strengths, and career goals.
+      Describe the type of opportunity you want and the strengths you bring.
     </p>
-    <textarea id="summary" rows="4" placeholder="Write your professional summary here."></textarea>
+    <textarea id="objective" rows="4" placeholder="Write your career objective here."></textarea>
   </section>
 
   <section class="card">
-    <div class="head"><h2>Skills</h2></div>
+    <div class="head"><h2>3. Skills</h2></div>
     <div class="row">
       <input id="skill" placeholder="Type a skill" aria-label="New skill">
-      <button class="add" onclick="addSkill()">Add</button>
+      <button type="button" class="add" id="addSkillBtn">Add</button>
     </div>
     <div id="skills" class="chips"></div>
   </section>
 
   <section class="card">
     <div class="head">
-      <h2>Work Experience</h2>
-      <button class="add" onclick="addJob()">＋ Add Job</button>
+      <h2>4. Work Experience</h2>
+      <button type="button" class="add" id="addJobBtn">＋ Add Job</button>
     </div>
     <div id="jobs"></div>
   </section>
 
   <section class="card">
     <div class="head">
-      <h2>Education</h2>
-      <button class="add" onclick="addEdu()">＋ Add Education</button>
+      <h2>5. Education</h2>
+      <button type="button" class="add" id="addEduBtn">＋ Add Education</button>
     </div>
     <div id="education"></div>
   </section>
 
+  <div id="saveStatus" class="status" aria-live="polite"></div>
+
   <section class="preview-card">
-    <div class="preview-label">Live Resume Preview</div>
+    <div class="preview-label">6. Live Resume Preview</div>
     <div class="preview">
       <div class="rh">
         <h2 id="rname"></h2>
-        <div class="title" id="rtitle"></div>
+        <div class="resume-title" id="rtitle"></div>
         <div class="contact" id="rcontact"></div>
       </div>
-      <div class="sec"><h3>Professional Summary</h3><p id="rsummary"></p></div>
+      <div class="sec"><h3>Objective</h3><p id="robjective"></p></div>
       <div class="sec"><h3>Skills</h3><div id="rskills" class="skills"></div></div>
       <div class="sec"><h3>Employment History</h3><div id="rjobs"></div></div>
       <div class="sec"><h3>Education</h3><div id="redu"></div></div>
     </div>
   </section>
-  <div id="saveStatus" class="status" aria-live="polite"></div>
 </main>
 
 <script>
+"use strict";
+
 const key="resume-helper-ip";
 
 const defaults={
@@ -154,7 +156,7 @@ const defaults={
   email:"you@email.com",
   phone:"(555) 555-5555",
   city:"City, CA",
-  summary:"Reliable professional with experience helping people, solving problems, and getting results.",
+  objective:"Motivated professional seeking an opportunity to apply my skills, contribute to a team, and deliver positive results.",
   skills:["Customer Service","Communication","Problem Solving"],
   jobs:[{
     company:"Company Name",
@@ -180,19 +182,20 @@ function normalize(x){
     email:x.email??defaults.email,
     phone:x.phone??defaults.phone,
     city:x.city??defaults.city,
-    summary:x.summary??defaults.summary,
-    skills:Array.isArray(x.skills)?x.skills:[],
+    // Read the previous summary field so existing saved text is preserved.
+    objective:x.objective??x.summary??defaults.objective,
+    skills:Array.isArray(x.skills)?x.skills.slice():defaults.skills.slice(),
     jobs:Array.isArray(x.jobs)?x.jobs.map(j=>({
       company:j.company??"",
       role:j.role??"",
       dates:j.dates??"",
-      bullets:Array.isArray(j.bullets)?j.bullets:[""]
-    })):[...defaults.jobs],
+      bullets:Array.isArray(j.bullets)?j.bullets.slice():[""]
+    })) : JSON.parse(JSON.stringify(defaults.jobs)),
     education:Array.isArray(x.education)?x.education.map(e=>({
       school:e.school??"",
       degree:e.degree??"",
       dates:e.dates??""
-    })):[...defaults.education]
+    })) : JSON.parse(JSON.stringify(defaults.education))
   };
 }
 
@@ -214,13 +217,12 @@ function esc(s){
 }
 
 function persist(){
+  const status=document.getElementById("saveStatus");
   try{
     localStorage.setItem(key,JSON.stringify(d));
-    const status=document.getElementById("saveStatus");
     if(status)status.textContent="Saved automatically";
   }catch(e){
-    const status=document.getElementById("saveStatus");
-    if(status)status.textContent="Unable to save in this browser.";
+    if(status)status.textContent="Unable to save in this browser. Please keep a backup of your resume.";
   }
 }
 
@@ -229,7 +231,7 @@ function updatePreview(){
   document.getElementById("rtitle").textContent=d.title||"";
   document.getElementById("rcontact").textContent=
     [d.email,d.phone,d.city].filter(Boolean).join(" • ");
-  document.getElementById("rsummary").textContent=d.summary||"";
+  document.getElementById("robjective").textContent=d.objective||"";
 
   document.getElementById("rskills").innerHTML=d.skills.length
     ?d.skills.map(s=>`<span>${esc(s)}</span>`).join("")
@@ -255,72 +257,128 @@ function updatePreview(){
     :"<div class='empty'>No education added yet.</div>";
 }
 
-/* Update data and preview without rebuilding input fields.
-   This keeps the active field focused while typing on mobile. */
-function bindBasic(id,k){
+/* Basic fields update the data and preview without replacing input elements. */
+function bindBasic(id,keyName){
   const el=document.getElementById(id);
-  el.value=d[k];
+  el.value=d[keyName];
   el.addEventListener("input",()=>{
-    d[k]=el.value;
+    d[keyName]=el.value;
     persist();
     updatePreview();
   });
 }
-["name","title","email","phone","city","summary"].forEach(k=>bindBasic(k,k));
 
-function updateJob(i,k,v){
-  d.jobs[i][k]=v;
+["name","title","email","phone","city"].forEach(k=>bindBasic(k,k));
+bindBasic("objective","objective");
+
+/* Work and education fields use delegated input handlers.
+   Typing never calls renderEditor(), so the active field stays in place. */
+document.getElementById("jobs").addEventListener("input",e=>{
+  const el=e.target;
+  if(!el.matches("[data-job-field]"))return;
+  const i=Number(el.dataset.index);
+  const field=el.dataset.jobField;
+  if(!d.jobs[i])return;
+  if(field==="bullet"){
+    d.jobs[i].bullets[Number(el.dataset.bulletIndex)]=el.value;
+  }else{
+    d.jobs[i][field]=el.value;
+  }
   persist();
   updatePreview();
+});
+
+document.getElementById("education").addEventListener("input",e=>{
+  const el=e.target;
+  if(!el.matches("[data-edu-field]"))return;
+  const i=Number(el.dataset.index);
+  const field=el.dataset.eduField;
+  if(!d.education[i])return;
+  d.education[i][field]=el.value;
+  persist();
+  updatePreview();
+});
+
+function renderJobs(){
+  const root=document.getElementById("jobs");
+  root.innerHTML=d.jobs.map((j,i)=>`
+    <div class="repeat">
+      <div class="head">
+        <b>Job ${i+1}</b>
+        <button type="button" class="danger" data-action="delete-job" data-index="${i}">Delete</button>
+      </div>
+      <div class="grid">
+        <label>Company<span><input data-job-field="company" data-index="${i}" value="${esc(j.company)}" autocomplete="organization"></span></label>
+        <label>Job title<span><input data-job-field="role" data-index="${i}" value="${esc(j.role)}" autocomplete="organization-title"></span></label>
+        <label>Dates<span><input data-job-field="dates" data-index="${i}" value="${esc(j.dates)}" placeholder="e.g. Jan 2022 – Present"></span></label>
+      </div>
+      ${j.bullets.map((b,k)=>`
+        <div class="row">
+          <input data-job-field="bullet" data-index="${i}" data-bullet-index="${k}" value="${esc(b)}" placeholder="Achievement or responsibility" aria-label="Job ${i+1} bullet ${k+1}">
+          <button type="button" class="danger" data-action="delete-bullet" data-index="${i}" data-bullet-index="${k}" aria-label="Remove bullet">×</button>
+        </div>`).join("")}
+      <button type="button" class="add" data-action="add-bullet" data-index="${i}">＋ Add Bullet</button>
+    </div>`).join("");
 }
-function updateBullet(i,k,v){
-  d.jobs[i].bullets[k]=v;
-  persist();
-  updatePreview();
+
+function renderEducation(){
+  document.getElementById("education").innerHTML=d.education.map((e,i)=>`
+    <div class="repeat">
+      <div class="head">
+        <b>Education ${i+1}</b>
+        <button type="button" class="danger" data-action="delete-education" data-index="${i}">Delete</button>
+      </div>
+      <div class="grid">
+        <label>School<span><input data-edu-field="school" data-index="${i}" value="${esc(e.school)}" autocomplete="organization"></span></label>
+        <label>Degree / Certificate<span><input data-edu-field="degree" data-index="${i}" value="${esc(e.degree)}"></span></label>
+        <label>Dates<span><input data-edu-field="dates" data-index="${i}" value="${esc(e.dates)}" placeholder="e.g. 2020 – 2024"></span></label>
+      </div>
+    </div>`).join("");
 }
-function updateEdu(i,k,v){
-  d.education[i][k]=v;
-  persist();
-  updatePreview();
+
+function renderSkills(){
+  document.getElementById("skills").innerHTML=d.skills.length
+    ?d.skills.map((s,i)=>`<span class="chip">${esc(s)} <button type="button" data-action="delete-skill" data-index="${i}" aria-label="Remove ${esc(s)}">×</button></span>`).join("")
+    :"<span class='empty'>No skills added yet.</span>";
+}
+
+function renderEditor(){
+  renderJobs();
+  renderEducation();
+  renderSkills();
+}
+
+function focusNew(selector){
+  const fields=document.querySelectorAll(selector);
+  const last=fields[fields.length-1];
+  if(last)last.focus();
 }
 
 function addJob(){
   d.jobs.push({company:"",role:"",dates:"",bullets:[""]});
   persist();
-  renderEditor();
+  renderJobs();
   updatePreview();
+  focusNew('[data-job-field="company"]');
 }
-function delJob(i){
-  d.jobs.splice(i,1);
-  persist();
-  renderEditor();
-  updatePreview();
-}
+
 function addBullet(i){
   d.jobs[i].bullets.push("");
   persist();
-  renderEditor();
+  renderJobs();
   updatePreview();
+  const fields=document.querySelectorAll(`[data-job-field="bullet"][data-index="${i}"]`);
+  if(fields.length)fields[fields.length-1].focus();
 }
-function delBullet(i,k){
-  d.jobs[i].bullets.splice(k,1);
-  if(!d.jobs[i].bullets.length)d.jobs[i].bullets.push("");
-  persist();
-  renderEditor();
-  updatePreview();
-}
+
 function addEdu(){
   d.education.push({school:"",degree:"",dates:""});
   persist();
-  renderEditor();
+  renderEducation();
   updatePreview();
+  focusNew('[data-edu-field="school"]');
 }
-function delEdu(i){
-  d.education.splice(i,1);
-  persist();
-  renderEditor();
-  updatePreview();
-}
+
 function addSkill(){
   const el=document.getElementById("skill");
   const v=el.value.trim();
@@ -328,70 +386,54 @@ function addSkill(){
   if(!d.skills.includes(v))d.skills.push(v);
   el.value="";
   persist();
-  renderEditor();
+  renderSkills();
   updatePreview();
-  document.getElementById("skill").focus();
+  el.focus();
 }
+
 document.getElementById("skill").addEventListener("keydown",e=>{
   if(e.key==="Enter"){
     e.preventDefault();
     addSkill();
   }
 });
-function delSkill(i){
-  d.skills.splice(i,1);
-  persist();
-  renderEditor();
-  updatePreview();
-}
-function improve(){
-  const current=d.summary.trim();
-  const addition=" Results-focused, dependable, and committed to delivering high-quality work.";
-  if(!current.includes("Results-focused, dependable")){
-    d.summary=(current||"Reliable professional").replace(/[. ]+$/,".")+addition;
-    document.getElementById("summary").value=d.summary;
+
+document.getElementById("addSkillBtn").addEventListener("click",addSkill);
+document.getElementById("addJobBtn").addEventListener("click",addJob);
+document.getElementById("addEduBtn").addEventListener("click",addEdu);
+document.getElementById("printBtn").addEventListener("click",()=>window.print());
+
+document.addEventListener("click",e=>{
+  const btn=e.target.closest("[data-action]");
+  if(!btn)return;
+  const i=Number(btn.dataset.index);
+  const action=btn.dataset.action;
+
+  if(action==="delete-job"){
+    d.jobs.splice(i,1);
     persist();
+    renderJobs();
+    updatePreview();
+  }else if(action==="add-bullet"){
+    addBullet(i);
+  }else if(action==="delete-bullet"){
+    d.jobs[i].bullets.splice(Number(btn.dataset.bulletIndex),1);
+    if(!d.jobs[i].bullets.length)d.jobs[i].bullets.push("");
+    persist();
+    renderJobs();
+    updatePreview();
+  }else if(action==="delete-education"){
+    d.education.splice(i,1);
+    persist();
+    renderEducation();
+    updatePreview();
+  }else if(action==="delete-skill"){
+    d.skills.splice(i,1);
+    persist();
+    renderSkills();
     updatePreview();
   }
-}
-
-function renderEditor(){
-  document.getElementById("jobs").innerHTML=d.jobs.map((j,i)=>`
-    <div class="repeat">
-      <div class="head">
-        <b>Job ${i+1}</b>
-        <button class="danger" onclick="delJob(${i})">Delete</button>
-      </div>
-      <div class="grid">
-        <label>Company<span><input value="${esc(j.company)}" oninput="updateJob(${i},'company',this.value)"></span></label>
-        <label>Job title<span><input value="${esc(j.role)}" oninput="updateJob(${i},'role',this.value)"></span></label>
-        <label>Dates<span><input value="${esc(j.dates)}" placeholder="e.g. Jan 2022 – Present" oninput="updateJob(${i},'dates',this.value)"></span></label>
-      </div>
-      ${j.bullets.map((b,k)=>`
-        <div class="row">
-          <input value="${esc(b)}" placeholder="Achievement or responsibility" aria-label="Job ${i+1} bullet ${k+1}" oninput="updateBullet(${i},${k},this.value)">
-          <button class="danger" onclick="delBullet(${i},${k})" aria-label="Remove bullet">×</button>
-        </div>`).join("")}
-      <button class="add" onclick="addBullet(${i})">＋ Bullet</button>
-    </div>`).join("");
-
-  document.getElementById("skills").innerHTML=d.skills.length
-    ?d.skills.map((s,i)=>`<span class="chip">${esc(s)} <button onclick="delSkill(${i})" aria-label="Remove skill">×</button></span>`).join("")
-    :"<span class='empty'>No skills added yet.</span>";
-
-  document.getElementById("education").innerHTML=d.education.map((e,i)=>`
-    <div class="repeat">
-      <div class="head">
-        <b>Education ${i+1}</b>
-        <button class="danger" onclick="delEdu(${i})">Delete</button>
-      </div>
-      <div class="grid">
-        <label>School<span><input value="${esc(e.school)}" oninput="updateEdu(${i},'school',this.value)"></span></label>
-        <label>Degree / Certificate<span><input value="${esc(e.degree)}" oninput="updateEdu(${i},'degree',this.value)"></span></label>
-        <label>Dates<span><input value="${esc(e.dates)}" placeholder="e.g. 2020 – 2024" oninput="updateEdu(${i},'dates',this.value)"></span></label>
-      </div>
-    </div>`).join("");
-}
+});
 
 renderEditor();
 updatePreview();
