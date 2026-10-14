@@ -45,7 +45,17 @@ textarea{resize:vertical;min-height:100px}
 .sec p,.sec li{font-size:12.5px;line-height:1.45;overflow-wrap:anywhere}
 .jobtop{display:flex;justify-content:space-between;gap:12px;font-size:12.5px}
 .company{font-size:12px;color:#333;margin-top:2px;overflow-wrap:anywhere}
-.skills span{font-size:12px;margin:0 12px 3px 0;display:inline-block}
+
+/* Skills display as individual bullet points in the resume */
+.skills span{
+  font-size:12px;
+  margin:0 0 3px 0;
+  display:block;
+}
+.skills span:not(.empty)::before{
+  content:"• ";
+}
+
 .empty{font-size:12px;color:#777}
 .status{font-size:12px;color:#64748b;margin:0 0 14px}
 @media(max-width:700px){
@@ -174,7 +184,6 @@ function normalize(x){
     name:x.name??"",
     email:x.email??"",
     phone:x.phone??"",
-    // Preserve any previously saved Objective or Professional Summary text.
     objective:x.objective??x.summary??"",
     skills:Array.isArray(x.skills)?x.skills.slice():defaults.skills.slice(),
     jobs:Array.isArray(x.jobs)?x.jobs.map(j=>({
@@ -248,7 +257,6 @@ function updatePreview(){
     :"<div class='empty'>No education added yet.</div>";
 }
 
-/* Basic fields update without replacing the active input. */
 function bindBasic(id,keyName){
   const el=document.getElementById(id);
   el.value=d[keyName];
@@ -262,7 +270,6 @@ function bindBasic(id,keyName){
 ["name","email","phone"].forEach(k=>bindBasic(k,k));
 bindBasic("objective","objective");
 
-/* Typing in Work Experience does not rerender the editor. */
 document.getElementById("jobs").addEventListener("input",e=>{
   const el=e.target;
   if(!el.matches("[data-job-field]"))return;
@@ -278,7 +285,6 @@ document.getElementById("jobs").addEventListener("input",e=>{
   updatePreview();
 });
 
-/* Typing in Education does not rerender the editor. */
 document.getElementById("education").addEventListener("input",e=>{
   const el=e.target;
   if(!el.matches("[data-edu-field]"))return;
