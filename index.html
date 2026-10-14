@@ -39,7 +39,6 @@ textarea{resize:vertical;min-height:100px}
 .preview-label{font-size:17px;font-weight:800;margin-bottom:14px}
 .rh{border-bottom:1px solid #aaa;padding-bottom:13px;text-align:center}
 .rh h2{margin:0;font-size:29px;font-weight:800}
-.resume-title{font-weight:600;color:#202020}
 .contact{font-size:12px;color:#333;margin-top:6px}
 .sec{margin-top:17px}
 .sec h3{font-size:14px;padding-bottom:2px;margin-bottom:6px;text-decoration:underline;font-weight:800}
@@ -86,12 +85,9 @@ textarea{resize:vertical;min-height:100px}
   <section class="card">
     <div class="head"><h2>1. Name &amp; Contact Information</h2></div>
     <div class="grid">
-      <label>Full name<span><input id="name" autocomplete="name"></span></label>
-      <label>
-<h2>2. Objective</h2><span><input id="title" autocomplete="organization-title"></span></label>
+      <label>Full Name<span><input id="name" autocomplete="name"></span></label>
       <label>Email<span><input id="email" type="email" autocomplete="email"></span></label>
       <label>Phone<span><input id="phone" type="tel" autocomplete="tel"></span></label>
-      <label>City / State<span><input id="city" autocomplete="address-level2"></span></label>
     </div>
   </section>
 
@@ -135,7 +131,6 @@ textarea{resize:vertical;min-height:100px}
     <div class="preview">
       <div class="rh">
         <h2 id="rname"></h2>
-        <div class="resume-title" id="rtitle"></div>
         <div class="contact" id="rcontact"></div>
       </div>
       <div class="sec"><h3>Objective</h3><p id="robjective"></p></div>
@@ -152,23 +147,21 @@ textarea{resize:vertical;min-height:100px}
 const key="resume-helper-ip";
 
 const defaults={
-  name:"Your Name",
-  title:"Professional Title",
-  email:"you@email.com",
-  phone:"(555) 555-5555",
-  city:"City, CA",
-  objective:"Motivated professional seeking an opportunity to apply my skills, contribute to a team, and deliver positive results.",
+  name:"",
+  email:"",
+  phone:"",
+  objective:"",
   skills:["Customer Service","Communication","Problem Solving"],
   jobs:[{
-    company:"Company Name",
-    role:"Job Title",
-    dates:"2024 – Present",
-    bullets:["Describe an accomplishment or responsibility.","Add a measurable result when possible."]
+    company:"",
+    role:"",
+    dates:"",
+    bullets:["",""]
   }],
   education:[{
-    school:"School Name",
-    degree:"Degree / Certificate",
-    dates:"2020 – 2024"
+    school:"",
+    degree:"",
+    dates:""
   }]
 };
 
@@ -178,13 +171,11 @@ function cloneDefaults(){
 
 function normalize(x){
   return {
-    name:x.name??defaults.name,
-    title:x.title??defaults.title,
-    email:x.email??defaults.email,
-    phone:x.phone??defaults.phone,
-    city:x.city??defaults.city,
-    // Read the previous summary field so existing saved text is preserved.
-    objective:x.objective??x.summary??defaults.objective,
+    name:x.name??"",
+    email:x.email??"",
+    phone:x.phone??"",
+    // Preserve any previously saved Objective or Professional Summary text.
+    objective:x.objective??x.summary??"",
     skills:Array.isArray(x.skills)?x.skills.slice():defaults.skills.slice(),
     jobs:Array.isArray(x.jobs)?x.jobs.map(j=>({
       company:j.company??"",
@@ -228,10 +219,9 @@ function persist(){
 }
 
 function updatePreview(){
-  document.getElementById("rname").textContent=d.name||"Your Name";
-  document.getElementById("rtitle").textContent=d.title||"";
+  document.getElementById("rname").textContent=d.name||"";
   document.getElementById("rcontact").textContent=
-    [d.email,d.phone,d.city].filter(Boolean).join(" • ");
+    [d.email,d.phone].filter(Boolean).join(" • ");
   document.getElementById("robjective").textContent=d.objective||"";
 
   document.getElementById("rskills").innerHTML=d.skills.length
@@ -258,7 +248,7 @@ function updatePreview(){
     :"<div class='empty'>No education added yet.</div>";
 }
 
-/* Basic fields update the data and preview without replacing input elements. */
+/* Basic fields update without replacing the active input. */
 function bindBasic(id,keyName){
   const el=document.getElementById(id);
   el.value=d[keyName];
@@ -269,11 +259,10 @@ function bindBasic(id,keyName){
   });
 }
 
-["name","title","email","phone","city"].forEach(k=>bindBasic(k,k));
+["name","email","phone"].forEach(k=>bindBasic(k,k));
 bindBasic("objective","objective");
 
-/* Work and education fields use delegated input handlers.
-   Typing never calls renderEditor(), so the active field stays in place. */
+/* Typing in Work Experience does not rerender the editor. */
 document.getElementById("jobs").addEventListener("input",e=>{
   const el=e.target;
   if(!el.matches("[data-job-field]"))return;
@@ -289,6 +278,7 @@ document.getElementById("jobs").addEventListener("input",e=>{
   updatePreview();
 });
 
+/* Typing in Education does not rerender the editor. */
 document.getElementById("education").addEventListener("input",e=>{
   const el=e.target;
   if(!el.matches("[data-edu-field]"))return;
@@ -310,7 +300,7 @@ function renderJobs(){
       </div>
       <div class="grid">
         <label>Company<span><input data-job-field="company" data-index="${i}" value="${esc(j.company)}" autocomplete="organization"></span></label>
-        <label>Job title<span><input data-job-field="role" data-index="${i}" value="${esc(j.role)}" autocomplete="organization-title"></span></label>
+        <label>Job Title<span><input data-job-field="role" data-index="${i}" value="${esc(j.role)}" autocomplete="organization-title"></span></label>
         <label>Dates<span><input data-job-field="dates" data-index="${i}" value="${esc(j.dates)}" placeholder="e.g. Jan 2022 – Present"></span></label>
       </div>
       ${j.bullets.map((b,k)=>`
