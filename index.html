@@ -398,7 +398,10 @@ document.getElementById("skill").addEventListener("keydown",e=>{
 document.getElementById("addSkillBtn").addEventListener("click",addSkill);
 document.getElementById("addJobBtn").addEventListener("click",addJob);
 document.getElementById("addEduBtn").addEventListener("click",addEdu);
-document.getElementById("printBtn").addEventListener("click",()=>window.print());
+document.getElementById("printBtn").addEventListener("click", () => {
+  window.focus();
+  window.print();
+});
 
 document.addEventListener("click",e=>{
   const btn=e.target.closest("[data-action]");
